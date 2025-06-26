@@ -197,4 +197,112 @@ window.addEventListener('load', function() {
         mainContent.style.opacity = '1';
         mainContent.style.transform = 'translateY(0)';
     }
+
+    // Inicializar el asistente Snoopy
+    initSnoopyAssistant();
 });
+
+// Asistente Snoopy
+function initSnoopyAssistant() {
+    const snoopyAssistant = document.getElementById('snoopy-assistant');
+    const snoopyImg = document.getElementById('snoopy-img');
+    const snoopyMessage = document.getElementById('snoopy-message');
+    const snoopyButtons = document.querySelector('.snoopy-buttons');
+    
+    if (!snoopyAssistant) return;
+    
+    // Mensajes aleatorios para Snoopy
+    const messages = [
+        "¡Hola! Soy Snoopy, tu guía. ¿En qué puedo ayudarte hoy?",
+        "¡Hola! Haz clic en mí para navegar fácilmente.",
+        "¡Explora mi portafolio! Estoy aquí para ayudarte.",
+        "¿Buscas algo en especial? Puedo guiarte.",
+        "¡Bienvenido a mi portafolio! ¿En qué te ayudo?"
+    ];
+    
+    // Cambiar mensaje aleatoriamente cada 10 segundos
+    setInterval(() => {
+        const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+        snoopyMessage.textContent = randomMessage;
+    }, 10000);
+    
+    // Mostrar/ocultar botones al hacer clic en Snoopy
+    snoopyImg.addEventListener('click', (e) => {
+        e.stopPropagation();
+        snoopyAssistant.classList.toggle('active');
+    });
+    
+    // Ocultar botones al hacer clic fuera
+    document.addEventListener('click', (e) => {
+        if (!snoopyAssistant.contains(e.target)) {
+            snoopyAssistant.classList.remove('active');
+        }
+    });
+    
+    // Navegación con los botones de Snoopy
+    const buttons = document.querySelectorAll('.snoopy-btn');
+    buttons.forEach(button => {
+        button.addEventListener('click', (e) => {
+            const sectionId = button.getAttribute('data-section');
+            const section = document.getElementById(sectionId);
+            
+            if (section) {
+                // Desplazamiento suave a la sección
+                window.scrollTo({
+                    top: section.offsetTop - 70,
+                    behavior: 'smooth'
+                });
+                
+                // Mensaje de confirmación
+                const sectionName = button.textContent.trim();
+                snoopyMessage.textContent = `¡Perfecto! Vamos a la sección de ${sectionName}.`;
+                
+                // Ocultar botones después de la selección
+                snoopyAssistant.classList.remove('active');
+            }
+        });
+    });
+    
+    // Animación de saludo al cargar la página
+    setTimeout(() => {
+        snoopyMessage.textContent = "¡Bienvenido a mi portafolio! ¿En qué te ayudo hoy?";
+        snoopyMessage.style.opacity = '1';
+        snoopyMessage.style.visibility = 'visible';
+        
+        setTimeout(() => {
+            snoopyMessage.style.opacity = '0';
+            snoopyMessage.style.visibility = 'hidden';
+        }, 5000);
+    }, 2000);
+}
+
+// Hacer que Snoopy siga el scroll suavemente
+let lastScrollTop = 0;
+const snoopyAssistant = document.getElementById('snoopy-assistant');
+
+if (snoopyAssistant) {
+    window.addEventListener('scroll', () => {
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        
+        // Actualizar posición de Snoopy
+        if (Math.abs(lastScrollTop - scrollTop) > 10) {
+            snoopyAssistant.style.bottom = '30px';
+            snoopyAssistant.style.transition = 'bottom 0.3s ease';
+            
+            // Mostrar mensaje al hacer scroll
+            const snoopyMessage = document.getElementById('snoopy-message');
+            if (snoopyMessage) {
+                snoopyMessage.textContent = "¿Neitas ayuda para navegar? ¡Haz clic en mí!";
+                snoopyMessage.style.opacity = '1';
+                snoopyMessage.style.visibility = 'visible';
+                
+                setTimeout(() => {
+                    snoopyMessage.style.opacity = '0';
+                    snoopyMessage.style.visibility = 'hidden';
+                }, 3000);
+            }
+        }
+        
+        lastScrollTop = scrollTop;
+    });
+}
